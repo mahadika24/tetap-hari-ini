@@ -23,3 +23,17 @@
 - [x] Sebelum tidur, pengguna mengetik kalimat wajib “Hari ini saya tidak main judi.”; aplikasi memvalidasi kalimat tersebut sebelum menyimpannya.
 - [x] Checklist rutinitas, langkah anti-judi, motivasi yang dibuka, dan refleksi malam disimpan untuk riwayat progres per hari; riwayat menampilkan jumlah checklist selesai, isi refleksi tersimpan, jumlah dorongan, serta langkah jeda yang dipilih.
 - [x] Catatan, progres, dan preferensi foto bersifat privat serta disimpan lokal di perangkat.
+
+## Chat dukungan privat
+- [x] Pengguna masuk memakai autentikasi Manus yang sudah disediakan proyek dan memilih nama samaran; jangan mengekspos nama atau email OAuth ke komunitas.
+- [x] Pengguna dapat membuat lingkaran dukungan privat dan bergabung melalui kode undangan; setiap lingkaran memiliki chat teks yang hanya dapat dibaca oleh anggota aktifnya.
+- [x] Pesan memiliki penulis dan waktu; semua endpoint membaca dan menulis pesan memeriksa sesi pengguna dan keanggotaan lingkaran di server.
+- [x] Pengguna dapat memblokir akun, melaporkan pesan/Story, dan menghapus pesan miliknya; blokir menyembunyikan konten kedua arah, mengeluarkan pemblokir dari semua lingkaran bersama (pemilik menyerahkan kepemilikan kepada anggota terlama), mencegah bergabung kembali selama blokir aktif, dan membuka blokir tidak memulihkan keanggotaan.
+- [x] Anggota dapat keluar dari lingkaran; pemilik yang keluar menyerahkan kepemilikan kepada anggota terlama, dan jika pemilik adalah satu-satunya anggota, aplikasi memberi peringatan bahwa lingkaran beserta seluruh chat dan Story privat di dalamnya akan dihapus setelah konfirmasi. Pesan anggota yang keluar tetap tersedia untuk anggota yang tersisa.
+
+## Story pencapaian dan privasi
+- [x] Pengguna dapat membagikan pencapaian berupa Story teks dengan pilihan audiens “Lingkaran saya” atau “Publik untuk pengguna Tetap Hari Ini”.
+- [x] Audiens bawaan Story adalah lingkaran privat; pengguna harus secara sadar mengubah audiens dan mengonfirmasi sebelum Story masuk ke feed publik dalam aplikasi.
+- [x] Feed publik hanya tampil kepada pengguna Tetap Hari Ini yang sudah masuk, bukan situs web terbuka atau seluruh internet; tidak ada nama/email asli OAuth yang ditampilkan.
+- [x] Story tidak lagi tampil di feed setelah 24 jam; baris Story dapat tetap tersimpan di database setelah kedaluwarsa; pemilik dapat menghapus Story sebelum kedaluwarsa; Story dan chat dapat dilaporkan atau pemiliknya diblokir.
+- [x] Pesan, lingkaran, keanggotaan, laporan, blokir, dan Story lintas pengguna disimpan di server/database; catatan pribadi dan foto keluarga tetap lokal.

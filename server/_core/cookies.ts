@@ -28,6 +28,27 @@ export function getSessionCookieOptions(
   };
 }
 
+export function getOAuthStateCookieName(req: Request): string {
+  return isSecureRequest(req) ? "__Host-manus_oauth_state" : "manus_local_oauth_state";
+}
+
+export function getOAuthStateCookieOptions(
+  req: Request,
+): Pick<CookieOptions, "httpOnly" | "path" | "sameSite" | "secure"> {
+  const secure = isSecureRequest(req);
+  return {
+    httpOnly: true,
+    path: "/",
+    sameSite: secure ? "none" : "lax",
+    secure,
+  };
+}
+
+export function currentOAuthStateNonce(req: Request): string | undefined {
+  if (!req.headers.cookie) return undefined;
+  return parseCookieHeader(req.headers.cookie)[getOAuthStateCookieName(req)];
+}
+
 function configuredApiHostname(): string | null {
   const packager = process.env.EXPO_PACKAGER_PROXY_URL;
   if (!packager) return null;
@@ -49,7 +70,7 @@ function legacyParentDomain(hostname: string): string | null {
 
 export function getSessionCookieName(req: Request): string {
   return isSecureRequest(req)
-    ? `__Host-manus_session_${SESSION_COOKIE_SUFFIX}`
+    ? "webdev_app_session"
     : `manus_local_session_${SESSION_COOKIE_SUFFIX}`;
 }
 
@@ -75,5 +96,11 @@ export function clearLegacySessionCookie(): RequestHandler {
 
 export function currentSessionCookie(req: Request): string | undefined {
   if (!req.headers.cookie) return undefined;
-  return parseCookieHeader(req.headers.cookie)[getSessionCookieName(req)];
+  const cookieName = getSessionCookieName(req);
+  const matchingCookies = req.headers.cookie.split(";").filter((item) => {
+    const separator = item.indexOf("=");
+    return separator >= 0 && item.slice(0, separator).trim() === cookieName;
+  });
+  if (matchingCookies.length !== 1) return undefined;
+  return parseCookieHeader(req.headers.cookie)[cookieName];
 }

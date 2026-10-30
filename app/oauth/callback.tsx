@@ -1,6 +1,7 @@
 import { ThemedView } from "@/components/themed-view";
 import * as Api from "@/lib/_core/api";
 import * as Auth from "@/lib/_core/auth";
+import { clearPendingOAuthState, getPendingOAuthState } from "@/constants/oauth";
 import * as Linking from "expo-linking";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -152,6 +153,13 @@ export default function OAuthCallback() {
           setErrorMessage("Missing code or state parameter");
           return;
         }
+
+        const pendingState = await getPendingOAuthState();
+        if (!pendingState || pendingState !== state) {
+          await clearPendingOAuthState();
+          throw new Error("State masuk tidak cocok. Mulai proses masuk kembali dari aplikasi.");
+        }
+        await clearPendingOAuthState();
 
         // Exchange code for session token
         console.log("[OAuth] Exchanging code for session token...");

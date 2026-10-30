@@ -1,4 +1,5 @@
 import * as Linking from "expo-linking";
+import * as SecureStore from "expo-secure-store";
 import Constants from "expo-constants";
 import * as ReactNative from "react-native";
 
@@ -54,17 +55,20 @@ export function getApiBaseUrl(): string {
 
 export const SESSION_TOKEN_KEY = "app_session_token";
 export const USER_INFO_KEY = "manus-runtime-user-info";
+export const OAUTH_PENDING_STATE_KEY = "manus_oauth_pending_state";
 
-const encodeState = (value: string) => {
-  if (typeof globalThis.btoa === "function") {
-    return globalThis.btoa(value);
-  }
-  const BufferImpl = (globalThis as Record<string, any>).Buffer;
-  if (BufferImpl) {
-    return BufferImpl.from(value, "utf-8").toString("base64");
-  }
-  return value;
-};
+export async function savePendingOAuthState(state: string) {
+  if (ReactNative.Platform.OS !== "web") await SecureStore.setItemAsync(OAUTH_PENDING_STATE_KEY, state);
+}
+
+export async function getPendingOAuthState() {
+  if (ReactNative.Platform.OS === "web") return null;
+  return SecureStore.getItemAsync(OAUTH_PENDING_STATE_KEY);
+}
+
+export async function clearPendingOAuthState() {
+  if (ReactNative.Platform.OS !== "web") await SecureStore.deleteItemAsync(OAUTH_PENDING_STATE_KEY);
+}
 
 /**
  * Get the redirect URI for OAuth callback.
@@ -81,17 +85,17 @@ export const getRedirectUri = () => {
   }
 };
 
-export const getLoginUrl = () => {
+export const getLoginUrl = (state: string) => {
   if (!OAUTH_PORTAL_URL || !APP_ID) {
     throw new Error("Manus login configuration is unavailable");
   }
   const redirectUri = getRedirectUri();
-  const state = encodeState(redirectUri);
 
   const url = new URL(`${OAUTH_PORTAL_URL}/app-auth`);
   url.searchParams.set("appId", APP_ID);
   url.searchParams.set("redirectUri", redirectUri);
   url.searchParams.set("state", state);
+  url.searchParams.set("responseType", "code");
   url.searchParams.set("type", "signIn");
 
   return url.toString();
@@ -108,7 +112,20 @@ export const getLoginUrl = () => {
  * @returns Always null, the callback is handled via deep link.
  */
 export async function startOAuthLogin(): Promise<string | null> {
-  const loginUrl = getLoginUrl();
+  const redirectUri = getRedirectUri();
+  const apiBaseUrl = getApiBaseUrl();
+  const stateResponse = await fetch(`${apiBaseUrl}/api/oauth/state`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ redirectUri, platform: ReactNative.Platform.OS === "web" ? "web" : "native" }),
+  });
+  if (!stateResponse.ok) throw new Error("Could not initialize secure sign-in");
+  const statePayload = await stateResponse.json() as { state?: unknown };
+  if (typeof statePayload.state !== "string") throw new Error("Could not initialize secure sign-in");
+  const state = statePayload.state;
+  if (ReactNative.Platform.OS !== "web") await savePendingOAuthState(state);
+  const loginUrl = getLoginUrl(state);
 
   if (ReactNative.Platform.OS === "web") {
     // On web, just redirect

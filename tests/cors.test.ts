@@ -209,7 +209,8 @@ describe("Mobile API origin and cookie isolation", () => {
     } as Request;
     const currentName = getSessionCookieName(request);
     const tossableParentName = `manus_session_${SESSION_COOKIE_SUFFIX}`;
-    expect(currentName.startsWith("__Host-")).toBe(true);
+    expect(currentName).toBe("webdev_app_session");
+    expect(getSessionCookieOptions(request)).not.toHaveProperty("domain");
     expect(
       getSessionCookieName({ ...request, protocol: "http" } as Request),
     ).toBe(`manus_local_session_${SESSION_COOKIE_SUFFIX}`);
@@ -225,6 +226,15 @@ describe("Mobile API origin and cookie isolation", () => {
         } as Request),
       ).toBe("current-project-token");
     }
+  });
+
+  it("rejects duplicate app session cookies to prevent cookie tossing", () => {
+    const request = {
+      protocol: "https",
+      headers: { cookie: "webdev_app_session=trusted-token; webdev_app_session=tossed-token" },
+      hostname: "3000-sandbox.preview.example.test",
+    } as Request;
+    expect(currentSessionCookie(request)).toBeUndefined();
   });
 
   it("expires the legacy parent-domain cookie from a recognized preview API host", () => {
