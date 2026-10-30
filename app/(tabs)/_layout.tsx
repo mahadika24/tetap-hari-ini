@@ -1,40 +1,27 @@
 import { Tabs } from "expo-router";
+import { Feather } from "@expo/vector-icons";
+import { Platform, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { HapticTab } from "@/components/haptic-tab";
-import { IconSymbol } from "@/components/ui/icon-symbol";
-import { Platform } from "react-native";
-import { useColors } from "@/hooks/use-colors";
+import { C, FONT } from "@/components/ui/tetap-ui";
 
 export default function TabLayout() {
-  const colors = useColors();
   const insets = useSafeAreaInsets();
-  const bottomPadding = Platform.OS === "web" ? 12 : Math.max(insets.bottom, 8);
-  const tabBarHeight = 56 + bottomPadding;
-
+  const bottomPadding = Platform.OS === "web" ? 10 : Math.max(insets.bottom, 8);
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: colors.tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarStyle: {
-          paddingTop: 8,
-          paddingBottom: bottomPadding,
-          height: tabBarHeight,
-          backgroundColor: colors.background,
-          borderTopColor: colors.border,
-          borderTopWidth: 0.5,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
+    <Tabs screenOptions={({ route }) => ({
+      headerShown: false,
+      tabBarActiveTintColor: C.accent,
+      tabBarInactiveTintColor: "#8193A7",
+      tabBarLabelStyle: { fontFamily: FONT.semi, fontSize: 10, marginTop: -2 },
+      tabBarStyle: { backgroundColor: C.bg, borderTopColor: C.border, borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 7, paddingBottom: bottomPadding, height: 56 + bottomPadding },
+      tabBarIcon: ({ color, size }) => {
+        const icon = route.name === "index" ? "sun" : route.name === "family" ? "heart" : "activity";
+        return <Feather name={icon} color={color} size={size - 2} />;
+      },
+    })}>
+      <Tabs.Screen name="index" options={{ title: "Hari ini" }} />
+      <Tabs.Screen name="family" options={{ title: "Keluarga" }} />
+      <Tabs.Screen name="progress" options={{ title: "Progres" }} />
     </Tabs>
   );
 }
