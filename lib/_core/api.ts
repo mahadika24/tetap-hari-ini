@@ -7,11 +7,7 @@ type ApiResponse<T> = {
   error?: string;
 };
 
-export async function apiCall<T>(
-  endpoint: string,
-  options: RequestInit = {},
-  settings: { unauthorizedAsNull?: boolean } = {},
-): Promise<T> {
+export async function apiCall<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...((options.headers as Record<string, string>) || {}),
@@ -47,9 +43,6 @@ export async function apiCall<T>(
 
     console.log("[API] Response received");
     if (!response.ok) {
-      if (response.status === 401 && settings.unauthorizedAsNull) {
-        return null as T;
-      }
       const errorText = await response.text();
       console.error("[API] Error response received");
       let errorMessage = errorText;
@@ -121,8 +114,7 @@ export async function getMe(): Promise<{
   lastSignedIn: string;
 } | null> {
   try {
-    const result = await apiCall<{ user: any } | null>("/api/auth/me", {}, { unauthorizedAsNull: true });
-    if (!result) return null;
+    const result = await apiCall<{ user: any }>("/api/auth/me");
     return result.user || null;
   } catch {
     console.error("[API] getMe failed");
