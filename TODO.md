@@ -37,3 +37,12 @@
 - [x] Feed publik hanya tampil kepada pengguna Tetap Hari Ini yang sudah masuk, bukan situs web terbuka atau seluruh internet; tidak ada nama/email asli OAuth yang ditampilkan.
 - [x] Story tidak lagi tampil di feed setelah 24 jam; baris Story dapat tetap tersimpan di database setelah kedaluwarsa; pemilik dapat menghapus Story sebelum kedaluwarsa; Story dan chat dapat dilaporkan atau pemiliknya diblokir.
 - [x] Pesan, lingkaran, keanggotaan, laporan, blokir, dan Story lintas pengguna disimpan di server/database; catatan pribadi dan foto keluarga tetap lokal.
+
+
+## Target tabungan, tujuan, Todo, dan setoran
+- [x] Sediakan menu tambahan untuk membuat satu atau lebih target uang dengan nama/tujuan, nominal target dalam rupiah, dan durasi yang dapat dipilih dalam hari, bulan, atau tahun.
+- [x] Tampilkan jumlah hari tersisa, total target, jumlah terkumpul, sisa nominal, progres, dan rekomendasi setoran harian berdasarkan target serta durasi.
+- [x] Sediakan Todo yang dapat ditambahkan dan dicentang per tujuan tabungan.
+- [x] Pengguna dapat mencatat beberapa setoran aktual dengan nominal serta tanggal; pelacakan saldo harus menghitung jumlah setoran tercatat dan tidak menganggap nominal target sudah tercapai bila belum.
+- [x] Sediakan opsi setoran minimum harian saat terjadi keadaan tak terduga/force majeure (misalnya Rp50.000 jika target harian penuh tidak sanggup dipenuhi). Opsi ini tidak wajib diisi, pengguna dapat mencatat nominal aktual di bawah target, dan tampilan harus tetap memperlihatkan selisih menuju target dengan jelas.
+- [x] Tujuan, daftar Todo, dan riwayat setoran disimpan secara lokal di perangkat dan tidak dibagikan ke komunitas.

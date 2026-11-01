@@ -15,13 +15,14 @@ export default function TabLayout() {
       tabBarLabelStyle: { fontFamily: FONT.semi, fontSize: 10, marginTop: -2 },
       tabBarStyle: { backgroundColor: C.bg, borderTopColor: C.border, borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 7, paddingBottom: bottomPadding, height: 56 + bottomPadding },
       tabBarIcon: ({ color, size }) => {
-        const icon = route.name === "index" ? "sun" : route.name === "family" ? "heart" : route.name === "community" ? "users" : "activity";
+        const icon = route.name === "index" ? "sun" : route.name === "family" ? "heart" : route.name === "community" ? "users" : route.name === "savings" ? "target" : "activity";
         return <Feather name={icon} color={color} size={size - 2} />;
       },
     })}>
       <Tabs.Screen name="index" options={{ title: "Hari ini" }} />
       <Tabs.Screen name="family" options={{ title: "Keluarga" }} />
       <Tabs.Screen name="progress" options={{ title: "Progres" }} />
+      <Tabs.Screen name="savings" options={{ title: "Target" }} />
       <Tabs.Screen name="community" options={{ title: "Komunitas" }} />
     </Tabs>
   );
